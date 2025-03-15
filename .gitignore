@@ -1,2 +1,8 @@
+# Virtual environments
 .env
+
+# csTimer .txt files
 *.txt
+
+# Test notebooks
+*.ipynb
