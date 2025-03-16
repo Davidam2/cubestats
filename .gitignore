@@ -6,3 +6,9 @@
 
 # Test notebooks
 *.ipynb
+
+# Local settings
+.vscode/
+
+# Output files
+*.csv
