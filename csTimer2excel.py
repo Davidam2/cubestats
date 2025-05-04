@@ -9,11 +9,11 @@ Arguments:
     output_file: The .csv file to be created.
 
 Example:
-    python csTimer2excel.py input.txt output.csv
+    python csTimer2excel.py -i cstimer.txt -o output.csv
 
 Dependencies:
     pandas
-    openpyxl
+    numpy
 
 Author:
     David Alvarezs
@@ -131,10 +131,10 @@ class csTimer2excel:
         """
         # Create a DataFrame
         df = pd.DataFrame(columns = ['Session', 'Num', 'Date', 'Time', 'Penalty',
-                                     'Mix', 'avg5', 'avg12', 'avg100', 'avg1000',
+                                     'Scramble', 'avg5', 'avg12', 'avg100', 'avg1000',
                                      'avg5000', 'avg10000'])
         df = df.astype({'Session': 'object', 'Num': 'int', 'Date': 'object',
-                        'Time': 'float', 'Penalty': 'object', 'Mix': 'object',
+                        'Time': 'float', 'Penalty': 'object', 'Scramble': 'object',
                         'avg5': 'float', 'avg12': 'float', 'avg100': 'float',
                         'avg1000': 'float', 'avg5000': 'float', 'avg10000': 'float'
         })
@@ -176,7 +176,7 @@ class csTimer2excel:
 
                 df = pd.concat([df, pd.DataFrame(
                     {'Session': [name_session], 'Num':j+1, 'Date': [date], 
-                     'Time': [time], 'Penalty': [penalty], 'Mix': [mix],
+                     'Time': [time], 'Penalty': [penalty], 'Scramble': [mix],
                      'avg5': [current_avgs['avg5']],
                      'avg12': [current_avgs['avg12']],
                      'avg100': [current_avgs['avg100']],

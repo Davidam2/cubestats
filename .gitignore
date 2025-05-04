@@ -12,3 +12,12 @@
 
 # Output files
 *.csv
+
+# User interface files
+*.ui
+
+# Temporary files
+/tmp
+
+# Style files
+*.qss
