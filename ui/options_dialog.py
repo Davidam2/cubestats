@@ -1,7 +1,6 @@
-from PyQt6.QtWidgets import (
-    QDialog, QVBoxLayout, QHBoxLayout, QLabel,
-    QSpinBox, QCheckBox
-)
+from PyQt6.QtWidgets import (QCheckBox, QDialog, QHBoxLayout, QLabel, QSpinBox,
+                             QVBoxLayout)
+
 
 class OptionsDialog(QDialog):
     def __init__(self, parent=None):
@@ -11,7 +10,7 @@ class OptionsDialog(QDialog):
 
         # Scramble length controls
         self.horizontal_layout = QHBoxLayout()
-        self.label_scramble_length = QLabel('Set scramble length:', self)
+        self.label_scramble_length = QLabel("Set scramble length:", self)
         self.horizontal_layout.addWidget(self.label_scramble_length)
 
         self.spinBox_scramble_length = QSpinBox(self)
@@ -23,5 +22,5 @@ class OptionsDialog(QDialog):
         self.layout.addLayout(self.horizontal_layout)
 
         # Checkboxes
-        self.checkBox_showTimes = QCheckBox('Show times', self)
+        self.checkBox_showTimes = QCheckBox("Show times", self)
         self.layout.addWidget(self.checkBox_showTimes)

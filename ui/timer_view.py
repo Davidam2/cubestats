@@ -159,7 +159,9 @@ class Ui_MainWindow(object):
         self.menuMenu.setTitle(_translate("MainWindow", "Menu"))
         self.actionInfo.setText(_translate("MainWindow", "Info"))
         self.actionInfo.setShortcut(_translate("MainWindow", "Ctrl+I"))
-        self.actionChange_Background.setText(_translate("MainWindow", "Change Background"))
+        self.actionChange_Background.setText(
+            _translate("MainWindow", "Change Background")
+        )
         self.actionFocus_Mode.setText(_translate("MainWindow", "Focus Mode"))
         self.actionFocus_Mode.setShortcut(_translate("MainWindow", "Ctrl+F"))
         self.actionOptions.setText(_translate("MainWindow", "Options"))
