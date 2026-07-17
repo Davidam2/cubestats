@@ -1,23 +1,20 @@
-# Virtual environments
-.env
+# Node / Vite
+node_modules/
+dist/
+dev-dist/
+coverage/
+*.local
+.vite/
 
-# csTimer .txt files
-*.txt
-
-# Test notebooks
-*.ipynb
-
-# Local settings
+# Editor / OS
 .vscode/
+.idea/
+.DS_Store
 
-# Output files
-*.csv
+# Env
+.env
+.env.*
 
-# User interface files
-*.ui
-
-# Temporary files
-/tmp
-
-# Style files
-*.qss
+# Legacy Python runtime leftovers
+legacy/database/
+legacy/**/__pycache__/
