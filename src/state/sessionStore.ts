@@ -14,25 +14,33 @@ interface SessionStore {
   selectSession: (sessionId: string) => Promise<void>;
 }
 
-export const useSessionStore = create<SessionStore>((set) => ({
+export const useSessionStore = create<SessionStore>((set) => {
+  // Single-flight guard: StrictMode double-invokes the boot effect, and two
+  // concurrent ensureForEvent calls would both create a default session.
+  let hydration: Promise<void> | null = null;
+
+  return {
   activeEventId: "333",
   activeSessionId: null,
   ready: false,
 
-  async hydrate(defaultSessionName) {
-    const settings = useSettingsStore.getState().settings;
-    const eventId = settings.activeEventId;
-    let sessionId = settings.activeSessionId;
-    if (sessionId) {
-      const existing = await sessionRepo.get(sessionId);
-      if (!existing || existing.eventId !== eventId) sessionId = null;
-    }
-    if (!sessionId) {
-      const session = await sessionRepo.ensureForEvent(eventId, defaultSessionName);
-      sessionId = session.id;
-      await settingsRepo.setMany({ activeSessionId: sessionId });
-    }
-    set({ activeEventId: eventId, activeSessionId: sessionId, ready: true });
+  hydrate(defaultSessionName) {
+    hydration ??= (async () => {
+      const settings = useSettingsStore.getState().settings;
+      const eventId = settings.activeEventId;
+      let sessionId = settings.activeSessionId;
+      if (sessionId) {
+        const existing = await sessionRepo.get(sessionId);
+        if (!existing || existing.eventId !== eventId) sessionId = null;
+      }
+      if (!sessionId) {
+        const session = await sessionRepo.ensureForEvent(eventId, defaultSessionName);
+        sessionId = session.id;
+        await settingsRepo.setMany({ activeSessionId: sessionId });
+      }
+      set({ activeEventId: eventId, activeSessionId: sessionId, ready: true });
+    })();
+    return hydration;
   },
 
   async selectEvent(eventId, defaultSessionName) {
@@ -45,4 +53,5 @@ export const useSessionStore = create<SessionStore>((set) => ({
     await settingsRepo.setMany({ activeSessionId: sessionId });
     set({ activeSessionId: sessionId });
   },
-}));
+  };
+});

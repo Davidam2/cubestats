@@ -5,6 +5,9 @@ import { useUiStore } from "./state/uiStore";
 import { getDictionary } from "./i18n";
 import { TabBar } from "./components/TabBar";
 import { TimerView } from "./features/timer/TimerView";
+import { StatsView } from "./features/stats/StatsView";
+import { SessionsView } from "./features/sessions/SessionsView";
+import { SettingsView } from "./features/settings/SettingsView";
 
 export function App() {
   const [booted, setBooted] = useState(false);
@@ -38,18 +41,10 @@ export function App() {
       <TabBar />
       <main className="flex-1 overflow-hidden">
         {view === "timer" && <TimerView />}
-        {view === "stats" && <Placeholder label="Estadísticas" />}
-        {view === "sessions" && <Placeholder label="Sesiones" />}
-        {view === "settings" && <Placeholder label="Ajustes" />}
+        {view === "stats" && <StatsView />}
+        {view === "sessions" && <SessionsView />}
+        {view === "settings" && <SettingsView />}
       </main>
-    </div>
-  );
-}
-
-function Placeholder({ label }: { label: string }) {
-  return (
-    <div className="flex h-full items-center justify-center text-[var(--muted)]">
-      {label} — próximamente
     </div>
   );
 }

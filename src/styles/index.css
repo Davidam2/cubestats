@@ -10,6 +10,11 @@
   --fg: #e6eaf2;
   --muted: #8b94a6;
   --accent: #5b9dff;
+  /* Chart series (categorical: ao5 / ao12); single is the faint raw reference. */
+  --chart-ao5: #5b9dff;
+  --chart-ao12: #f0883e;
+  --chart-single: #4b5563;
+  --chart-fill: #5b9dff;
   color-scheme: dark;
 }
 
@@ -21,6 +26,10 @@
   --fg: #1a1f29;
   --muted: #626b7a;
   --accent: #2563eb;
+  --chart-ao5: #2563eb;
+  --chart-ao12: #d9730d;
+  --chart-single: #aab2bf;
+  --chart-fill: #2563eb;
   color-scheme: light;
 }
 
