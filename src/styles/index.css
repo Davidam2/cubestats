@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+/* Theme is toggled by data-theme on <html>; default tokens are the dark set. */
+:root,
+:root[data-theme="dark"] {
+  --bg: #0b0e14;
+  --surface: #151a23;
+  --surface-hover: #1f2634;
+  --border: #262d3a;
+  --fg: #e6eaf2;
+  --muted: #8b94a6;
+  --accent: #5b9dff;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-hover: #eef0f4;
+  --border: #d9dde5;
+  --fg: #1a1f29;
+  --muted: #626b7a;
+  --accent: #2563eb;
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}

@@ -1,0 +1,70 @@
+import type { Messages } from "./es";
+
+// Typed against the Spanish source of truth: a missing or misnamed key
+// (or a signature mismatch on function messages) is a compile error.
+export const en: Messages = {
+  "app.title": "CubeStats",
+  "nav.timer": "Timer",
+  "nav.stats": "Stats",
+  "nav.sessions": "Sessions",
+  "nav.settings": "Settings",
+
+  "timer.ready": "Ready",
+  "timer.holdToStart": "Hold to start",
+  "timer.releaseToStart": "Release to start",
+  "timer.inspection": "Inspection",
+  "timer.pressForScramble": "Press space or tap to get ready",
+  "timer.newScramble": "New scramble",
+  "timer.event": "Event",
+  "timer.session": "Session",
+  "timer.noScramble": "Generating scramble…",
+  "timer.scrambleError": "Couldn't generate a scramble",
+
+  "solve.penalty.ok": "OK",
+  "solve.penalty.plus2": "+2",
+  "solve.penalty.dnf": "DNF",
+  "solve.delete": "Delete",
+  "solve.deleted": "Solve deleted",
+  "solve.undo": "Undo",
+  "solve.comment": "Comment",
+  "solve.scramble": "Scramble",
+  "solve.copyScramble": "Copy scramble",
+  "solve.retryScramble": "Redo scramble",
+  "solve.moveToSession": "Move to session",
+  "solve.detail": "Solve detail",
+
+  "stat.single": "single",
+  "stat.best": "best",
+  "stat.mean": "mean",
+  "stat.count": "solves",
+  "stat.deviation": "deviation",
+  "stat.current": "current",
+
+  "list.recentSolves": "Recent solves",
+  "list.empty": "No solves yet. Start solving!",
+  "list.solveNumber": (n: number) => `Solve #${n}`,
+
+  "sessions.new": "New session",
+  "sessions.rename": "Rename",
+  "sessions.archive": "Archive",
+  "sessions.delete": "Delete session",
+  "sessions.notes": "Notes",
+  "sessions.confirmDelete": "Delete this session and all its solves?",
+  "sessions.defaultName": "Main session",
+  "sessions.namePrompt": "Session name",
+
+  "settings.language": "Language",
+  "settings.theme": "Theme",
+  "settings.theme.dark": "Dark",
+  "settings.theme.light": "Light",
+  "settings.inspection": "WCA inspection (15 s)",
+  "settings.inspectionVoice": "Voice alerts (8 s / 12 s)",
+  "settings.holdThreshold": "Hold threshold (ms)",
+  "settings.hideTime": "Hide time while solving",
+  "settings.manualEntry": "Manual time entry",
+
+  "common.cancel": "Cancel",
+  "common.save": "Save",
+  "common.close": "Close",
+  "common.confirm": "Confirm",
+};

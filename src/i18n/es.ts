@@ -1,0 +1,71 @@
+// No `as const`: string values widen to `string` so translations may differ,
+// while object keys stay a strict literal union and function signatures are kept.
+export const es = {
+  "app.title": "CubeStats",
+  "nav.timer": "Timer",
+  "nav.stats": "Estadísticas",
+  "nav.sessions": "Sesiones",
+  "nav.settings": "Ajustes",
+
+  "timer.ready": "Listo",
+  "timer.holdToStart": "Mantén pulsado para empezar",
+  "timer.releaseToStart": "Suelta para empezar",
+  "timer.inspection": "Inspección",
+  "timer.pressForScramble": "Pulsa espacio o toca para preparar",
+  "timer.newScramble": "Nuevo scramble",
+  "timer.event": "Evento",
+  "timer.session": "Sesión",
+  "timer.noScramble": "Generando scramble…",
+  "timer.scrambleError": "No se pudo generar el scramble",
+
+  "solve.penalty.ok": "OK",
+  "solve.penalty.plus2": "+2",
+  "solve.penalty.dnf": "DNF",
+  "solve.delete": "Eliminar",
+  "solve.deleted": "Solve eliminado",
+  "solve.undo": "Deshacer",
+  "solve.comment": "Comentario",
+  "solve.scramble": "Scramble",
+  "solve.copyScramble": "Copiar scramble",
+  "solve.retryScramble": "Repetir scramble",
+  "solve.moveToSession": "Mover a sesión",
+  "solve.detail": "Detalle del solve",
+
+  "stat.single": "single",
+  "stat.best": "mejor",
+  "stat.mean": "media",
+  "stat.count": "solves",
+  "stat.deviation": "desviación",
+  "stat.current": "actual",
+
+  "list.recentSolves": "Solves recientes",
+  "list.empty": "Aún no hay solves. ¡Empieza a resolver!",
+  "list.solveNumber": (n: number) => `Solve #${n}`,
+
+  "sessions.new": "Nueva sesión",
+  "sessions.rename": "Renombrar",
+  "sessions.archive": "Archivar",
+  "sessions.delete": "Eliminar sesión",
+  "sessions.notes": "Notas",
+  "sessions.confirmDelete": "¿Eliminar esta sesión y todos sus solves?",
+  "sessions.defaultName": "Sesión principal",
+  "sessions.namePrompt": "Nombre de la sesión",
+
+  "settings.language": "Idioma",
+  "settings.theme": "Tema",
+  "settings.theme.dark": "Oscuro",
+  "settings.theme.light": "Claro",
+  "settings.inspection": "Inspección WCA (15 s)",
+  "settings.inspectionVoice": "Avisos de voz (8 s / 12 s)",
+  "settings.holdThreshold": "Umbral de pulsación (ms)",
+  "settings.hideTime": "Ocultar tiempo mientras resuelves",
+  "settings.manualEntry": "Entrada manual de tiempos",
+
+  "common.cancel": "Cancelar",
+  "common.save": "Guardar",
+  "common.close": "Cerrar",
+  "common.confirm": "Confirmar",
+};
+
+export type Messages = typeof es;
+export type MessageKey = keyof Messages;

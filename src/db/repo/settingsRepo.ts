@@ -23,6 +23,11 @@ export function createSettingsRepo(db: CubeStatsDB = defaultDb) {
       const rows = Object.entries(patch).map(([key, value]) => ({ key, value, updatedAt: now }));
       await db.settings.bulkPut(rows);
     },
+
+    /** Whether a settings key has ever been persisted (vs. resolving to its default). */
+    async has(key: keyof Settings): Promise<boolean> {
+      return (await db.settings.get(key as string)) !== undefined;
+    },
   };
 }
 
