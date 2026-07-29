@@ -5,6 +5,14 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   base: "/cubestats/",
   plugins: [react(), tailwindcss()],
+  server: {
+    // IndexedDB is scoped per origin — scheme + host + *port*. If Vite bumps to
+    // another port because the default is busy, the app opens an empty database
+    // and every solve "disappears". strictPort fails loudly instead of silently
+    // relocating the app to a new origin.
+    port: 5199,
+    strictPort: true,
+  },
   // cubing.js supplies its own worker via an esbuild/Vite-friendly URL strategy
   // (see setSearchDebug in scrambleService). Overriding Vite's worker handling
   // or pre-bundling cubing makes Vite re-bundle that worker and pull DOM code

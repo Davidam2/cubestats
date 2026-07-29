@@ -7,10 +7,11 @@ interface RecentSolvesProps {
   solves: Solve[];
   totalCount: number;
   onDeleted: (solve: Solve) => void;
+  onSelect: (solve: Solve) => void;
 }
 
 /** Newest-first list of recent solves with inline penalty toggles and delete. */
-export function RecentSolves({ solves, totalCount, onDeleted }: RecentSolvesProps) {
+export function RecentSolves({ solves, totalCount, onDeleted, onSelect }: RecentSolvesProps) {
   const { t } = useI18n();
 
   if (solves.length === 0) {
@@ -27,14 +28,20 @@ export function RecentSolves({ solves, totalCount, onDeleted }: RecentSolvesProp
         const number = totalCount - i;
         return (
           <li key={solve.id} className="flex items-center justify-between gap-3 py-2 text-sm">
-            <span className="w-10 shrink-0 text-[var(--muted)] tabular-nums">{number}.</span>
-            <span
-              className={`flex-1 font-mono font-semibold tabular-nums ${
-                solve.penalty === "DNF" ? "text-[var(--muted)]" : "text-[var(--fg)]"
-              }`}
+            <button
+              onClick={() => onSelect(solve)}
+              title={t("solve.detail")}
+              className="flex flex-1 items-center gap-3 rounded text-left hover:bg-[var(--surface-hover)]"
             >
-              {formatSolveResult(solve)}
-            </span>
+              <span className="w-10 shrink-0 text-[var(--muted)] tabular-nums">{number}.</span>
+              <span
+                className={`flex-1 font-mono font-semibold tabular-nums ${
+                  solve.penalty === "DNF" ? "text-[var(--muted)]" : "text-[var(--fg)]"
+                }`}
+              >
+                {formatSolveResult(solve)}
+              </span>
+            </button>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => cyclePenalty(solve, "+2")}

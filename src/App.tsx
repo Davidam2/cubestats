@@ -3,6 +3,7 @@ import { useSettingsStore } from "./state/settingsStore";
 import { useSessionStore } from "./state/sessionStore";
 import { useUiStore } from "./state/uiStore";
 import { getDictionary } from "./i18n";
+import { requestPersistentStorage } from "./db/persist";
 import { TabBar } from "./components/TabBar";
 import { TimerView } from "./features/timer/TimerView";
 import { StatsView } from "./features/stats/StatsView";
@@ -18,6 +19,8 @@ export function App() {
   const view = useUiStore((s) => s.view);
 
   useEffect(() => {
+    // Not awaited: a best-effort storage upgrade must never delay or break boot.
+    void requestPersistentStorage();
     (async () => {
       await hydrateSettings();
       await hydrateSession(getDictionary(useSettingsStore.getState().settings.locale)["sessions.defaultName"]);

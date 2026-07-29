@@ -7,13 +7,20 @@ import { solveRepo } from "../../db/repo/solveRepo";
 import { sessionStats } from "../../domain/stats/session";
 import { trendData } from "../../domain/stats/series";
 import { activityByDay } from "../../domain/stats/heatmap";
+import { averageWindow, bestSingleIndex, worstSingleIndex } from "../../domain/stats/highlights";
 import { formatAverageMs, formatMs } from "../../domain/time/format";
 import { effectiveTimeMs, type Solve } from "../../domain/types";
 import { TrendChart } from "./TrendChart";
 import { HistogramChart } from "./HistogramChart";
 import { ActivityHeatmap } from "./ActivityHeatmap";
+import { AverageDetailModal } from "./AverageDetailModal";
+import { SolveDetailModal } from "../timer/SolveDetailModal";
 
 type Scope = "session" | "event";
+
+type Detail =
+  | { kind: "solve"; solve: Solve; number: number }
+  | { kind: "average"; title: string; window: NonNullable<ReturnType<typeof averageWindow<Solve>>> };
 
 function fmtSingle(value: number | null): string {
   return value === null ? "—" : formatMs(value);
@@ -30,6 +37,7 @@ export function StatsView() {
   const sessionId = useSessionStore((s) => s.activeSessionId);
   const streakMinSolves = useSettingsStore((s) => s.settings.streakMinSolves);
   const [scope, setScope] = useState<Scope>("session");
+  const [detail, setDetail] = useState<Detail | null>(null);
 
   const solves = useLiveQuery(
     () => {
@@ -48,10 +56,28 @@ export function StatsView() {
   );
   const days = useMemo(() => activityByDay(solves), [solves]);
 
-  const summary: { label: string; value: string }[] = [
+  const openSingle = (index: number) => {
+    if (index < 0) return;
+    setDetail({ kind: "solve", solve: solves[index], number: index + 1 });
+  };
+
+  const openAverage = (n: number, which: "current" | "best", label: string) => {
+    const window = averageWindow(solves, n, which);
+    if (window) setDetail({ kind: "average", title: label, window });
+  };
+
+  const summary: { label: string; value: string; onClick?: () => void }[] = [
     { label: t("stat.count"), value: String(stats.count) },
-    { label: t("stat.best"), value: fmtSingle(stats.best) },
-    { label: t("stat.worst"), value: fmtSingle(stats.worst) },
+    {
+      label: t("stat.best"),
+      value: fmtSingle(stats.best),
+      onClick: () => openSingle(bestSingleIndex(solves)),
+    },
+    {
+      label: t("stat.worst"),
+      value: fmtSingle(stats.worst),
+      onClick: () => openSingle(worstSingleIndex(solves)),
+    },
     { label: t("stat.mean"), value: fmtAvg(stats.mean) },
     { label: t("stat.median"), value: fmtAvg(stats.median) },
     { label: t("stat.deviation"), value: fmtAvg(stats.stdev) },
@@ -91,17 +117,24 @@ export function StatsView() {
             <section>
               <SectionTitle>{t("stats.summary")}</SectionTitle>
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                {summary.map((item) => (
-                  <div
-                    key={item.label}
-                    className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2"
-                  >
-                    <p className="text-xs uppercase tracking-wide text-[var(--muted)]">
-                      {item.label}
-                    </p>
-                    <p className="font-mono text-lg font-semibold">{item.value}</p>
-                  </div>
-                ))}
+                {summary.map((item) => {
+                  const clickable = item.onClick && item.value !== "—";
+                  const Tag = clickable ? "button" : "div";
+                  return (
+                    <Tag
+                      key={item.label}
+                      onClick={clickable ? item.onClick : undefined}
+                      className={`rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-left ${
+                        clickable ? "hover:bg-[var(--surface-hover)]" : ""
+                      }`}
+                    >
+                      <p className="text-xs uppercase tracking-wide text-[var(--muted)]">
+                        {item.label}
+                      </p>
+                      <p className="font-mono text-lg font-semibold">{item.value}</p>
+                    </Tag>
+                  );
+                })}
               </div>
             </section>
 
@@ -116,15 +149,22 @@ export function StatsView() {
                   </tr>
                 </thead>
                 <tbody>
-                  {AVERAGE_ROWS.map((key) => (
-                    <tr key={key} className="border-t border-[var(--border)]">
-                      <td className="py-1.5 text-[var(--muted)]">{key}</td>
-                      <td className="py-1.5 font-mono font-semibold">
-                        {fmtAvg(stats[key].current)}
-                      </td>
-                      <td className="py-1.5 font-mono font-semibold">{fmtAvg(stats[key].best)}</td>
-                    </tr>
-                  ))}
+                  {AVERAGE_ROWS.map((key) => {
+                    const n = Number(key.replace(/^(mo|ao)/, ""));
+                    return (
+                      <tr key={key} className="border-t border-[var(--border)]">
+                        <td className="py-1.5 text-[var(--muted)]">{key}</td>
+                        <AverageCell
+                          value={stats[key].current}
+                          onClick={() => openAverage(n, "current", `${key} — ${t("stats.colCurrent")}`)}
+                        />
+                        <AverageCell
+                          value={stats[key].best}
+                          onClick={() => openAverage(n, "best", `${key} — ${t("stats.colBest")}`)}
+                        />
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </section>
@@ -154,7 +194,43 @@ export function StatsView() {
           </>
         )}
       </div>
+
+      {detail?.kind === "solve" && (
+        <SolveDetailModal
+          solve={detail.solve}
+          number={detail.number}
+          onClose={() => setDetail(null)}
+        />
+      )}
+      {detail?.kind === "average" && (
+        <AverageDetailModal
+          title={detail.title}
+          window={detail.window}
+          onClose={() => setDetail(null)}
+          onSelectSolve={(solve) =>
+            setDetail({
+              kind: "solve",
+              solve,
+              number: solves.findIndex((s) => s.id === solve.id) + 1,
+            })
+          }
+        />
+      )}
     </div>
+  );
+}
+
+/** Average value cell; clickable when the average exists, to open its breakdown. */
+function AverageCell({ value, onClick }: { value: number | null; onClick: () => void }) {
+  if (value === null) {
+    return <td className="py-1.5 font-mono font-semibold text-[var(--muted)]">—</td>;
+  }
+  return (
+    <td className="py-1.5 font-mono font-semibold">
+      <button onClick={onClick} className="rounded px-1 hover:bg-[var(--surface-hover)]">
+        {formatAverageMs(value)}
+      </button>
+    </td>
   );
 }
 

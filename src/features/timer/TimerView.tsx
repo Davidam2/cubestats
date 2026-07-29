@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useSessionStore } from "../../state/sessionStore";
 import { useSettingsStore } from "../../state/settingsStore";
@@ -16,6 +16,7 @@ import { ScramblePanel } from "./ScramblePanel";
 import { SolveStatsBar } from "./SolveStatsBar";
 import { RecentSolves } from "./RecentSolves";
 import { EventSessionPicker } from "./EventSessionPicker";
+import { SolveDetailModal } from "./SolveDetailModal";
 
 function pendingToPenalty(pending: PendingPenalty): Penalty {
   return pending === "none" ? "OK" : pending;
@@ -30,6 +31,7 @@ export function TimerView() {
   const settings = useSettingsStore((s) => s.settings);
   const timerInputEnabled = useUiStore((s) => s.timerInputEnabled);
   const zenMode = useUiStore((s) => s.zenMode);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const { scramble, error, next: nextScramble } = useScramble(eventId);
 
@@ -45,6 +47,11 @@ export function TimerView() {
   const recent = useMemo(
     () => [...sessionSolves].reverse().slice(0, RECENT_LIMIT),
     [sessionSolves],
+  );
+
+  const selectedIndex = useMemo(
+    () => (selectedId ? sessionSolves.findIndex((s) => s.id === selectedId) : -1),
+    [selectedId, sessionSolves],
   );
 
   const onSolve = useCallback(
@@ -116,8 +123,22 @@ export function TimerView() {
           <h2 className="mb-1 text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
             {t("list.recentSolves")}
           </h2>
-          <RecentSolves solves={recent} totalCount={sessionSolves.length} onDeleted={() => {}} />
+          <RecentSolves
+            solves={recent}
+            totalCount={sessionSolves.length}
+            onDeleted={() => {}}
+            onSelect={(solve) => setSelectedId(solve.id)}
+          />
         </div>
+      )}
+
+      {selectedIndex >= 0 && (
+        <SolveDetailModal
+          solve={sessionSolves[selectedIndex]}
+          number={selectedIndex + 1}
+          onClose={() => setSelectedId(null)}
+          onDeleted={() => setSelectedId(null)}
+        />
       )}
     </div>
   );

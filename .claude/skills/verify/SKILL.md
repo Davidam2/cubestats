@@ -8,7 +8,7 @@ description: Build, launch and drive CubeStats in a real browser to verify chang
 ## Launch
 
 ```bash
-npm run dev -- --port 5199   # serves at http://localhost:5199/cubestats/ (note the base path!)
+npm run dev   # serves at http://localhost:5199/cubestats/ (note the base path!)
 ```
 
 Typecheck/lint/tests: `npm run typecheck`, `npm run lint`, `npm test` (vitest, fast).
@@ -50,6 +50,10 @@ Then wait ~1.5–2 s more for the scramble worker (cubing.js) before timing solv
 ## Gotchas
 
 - Dev serves under `/cubestats/`, not `/`.
+- The port is pinned to 5199 with `strictPort` in `vite.config.ts` **on purpose**:
+  IndexedDB is scoped per origin, so a floating port silently hands the app an
+  empty database. Never work around a busy 5199 by switching ports — kill the
+  other process, or you are testing a different database.
 - StrictMode double-runs the boot effect; hydration is single-flighted in
   `sessionStore` — a fresh profile must end up with exactly ONE "Sesión principal".
 - One harmless 404 in dev console (PWA asset); not a regression signal by itself.
