@@ -110,6 +110,18 @@ export const en: Messages = {
   "settings.importDone": (n: number) => `Imported ${n} solves.`,
   "settings.importFailed": "Couldn't read the file.",
   "settings.exportEmpty": "No solves to export.",
+  "settings.section.storage": "Storage",
+  "settings.storageProtected": "Your data is protected from automatic eviction.",
+  "settings.storageBestEffort":
+    "The browser may clear your data if it runs low on space. Export a backup every now and then.",
+  "settings.storageProtect": "Protect data",
+  "settings.storageInstallHint":
+    "Installing CubeStats as an app (browser menu → “Install” or “Add to Home Screen”) usually makes the browser grant this protection.",
+  "settings.storageUsage": (mb: string) => `${mb} MB used on this device.`,
+
+  "update.available": "A new version of CubeStats is available.",
+  "update.action": "Update",
+  "update.dismiss": "Not now",
 
   "common.cancel": "Cancel",
   "common.save": "Save",

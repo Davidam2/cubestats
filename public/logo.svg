@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="CubeStats">
+  <rect width="512" height="512" rx="112" fill="#0b0e14" />
+  <g transform="translate(0,-16)">
+    <!-- Isometric 3x3 cube: three faces in one accent hue, lit top to bottom. -->
+    <polygon points="106,187 256,100 406,187 256,274" fill="#8ebbff" />
+    <polygon points="106,187 256,274 256,444 106,357" fill="#3f7fe0" />
+    <polygon points="256,274 406,187 406,357 256,444" fill="#255ba8" />
+    <g stroke="#0b0e14" stroke-width="7" stroke-linecap="round" opacity="0.55">
+      <!-- top face -->
+      <path d="M156 216 L306 129 M206 245 L356 158 M156 158 L306 245 M206 129 L356 216" />
+      <!-- left face -->
+      <path d="M106 244 L256 331 M106 300 L256 387 M156 216 L156 386 M206 245 L206 415" />
+      <!-- right face -->
+      <path d="M256 331 L406 244 M256 387 L406 300 M306 245 L306 415 M356 216 L356 386" />
+    </g>
+    <path
+      d="M106 187 L256 100 L406 187 L406 357 L256 444 L106 357 Z M106 187 L256 274 L406 187 M256 274 L256 444"
+      fill="none"
+      stroke="#0b0e14"
+      stroke-width="9"
+      stroke-linejoin="round"
+    />
+  </g>
+</svg>

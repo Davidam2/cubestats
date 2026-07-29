@@ -1,5 +1,6 @@
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Locale, RaceTargetSource, Theme } from "../../domain/settings";
+import { requestPersistentStorage } from "../../db/persist";
 import { sessionRepo } from "../../db/repo/sessionRepo";
 import { useSessionStore } from "../../state/sessionStore";
 import { useSettingsStore } from "../../state/settingsStore";
@@ -10,11 +11,26 @@ export function SettingsView() {
   const { t } = useI18n();
   const settings = useSettingsStore((s) => s.settings);
   const set = useSettingsStore((s) => s.set);
+  const reloadSettings = useSettingsStore((s) => s.reload);
   const activeSessionId = useSessionStore((s) => s.activeSessionId);
 
   const backupInput = useRef<HTMLInputElement>(null);
   const cstimerInput = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [storage, setStorage] = useState<StorageState | null>(null);
+
+  const refreshStorage = useCallback(async () => {
+    setStorage(await readStorageState());
+  }, []);
+
+  useEffect(() => {
+    void refreshStorage();
+  }, [refreshStorage]);
+
+  const onProtectStorage = async () => {
+    await requestPersistentStorage();
+    await refreshStorage();
+  };
 
   const raceSources: { value: RaceTargetSource; label: string }[] = [
     { value: "pb-single", label: t("settings.raceSource.pbSingle") },
@@ -33,10 +49,12 @@ export function SettingsView() {
   const onImportFile = async (
     file: File | undefined,
     parse: (raw: string) => Promise<number | null>,
+    onSuccess?: () => Promise<void>,
   ) => {
     if (!file) return;
     try {
       const imported = await parse(await file.text());
+      if (imported !== null) await onSuccess?.();
       setMessage(imported === null ? t("settings.importFailed") : t("settings.importDone", imported));
     } catch {
       setMessage(t("settings.importFailed"));
@@ -135,6 +153,36 @@ export function SettingsView() {
           )}
         </Section>
 
+        {storage && (
+          <Section title={t("settings.section.storage")}>
+            <div className="flex flex-col gap-2 py-3 text-sm">
+              <div className="flex items-start gap-2">
+                <span aria-hidden className={storage.persisted ? "text-[var(--accent)]" : ""}>
+                  {storage.persisted ? "✓" : "!"}
+                </span>
+                <p className={storage.persisted ? "" : "text-[var(--muted)]"}>
+                  {storage.persisted
+                    ? t("settings.storageProtected")
+                    : t("settings.storageBestEffort")}
+                </p>
+              </div>
+              {storage.usageMb !== null && (
+                <p className="text-[var(--muted)]">{t("settings.storageUsage", storage.usageMb)}</p>
+              )}
+              {!storage.persisted && (
+                <>
+                  <p className="text-[var(--muted)]">{t("settings.storageInstallHint")}</p>
+                  <div>
+                    <DataButton onClick={() => void onProtectStorage()}>
+                      {t("settings.storageProtect")}
+                    </DataButton>
+                  </div>
+                </>
+              )}
+            </div>
+          </Section>
+        )}
+
         <Section title={t("settings.section.data")}>
           <div className="flex flex-wrap gap-2 py-2">
             <DataButton onClick={() => void onExportCsv()}>{t("settings.exportCsv")}</DataButton>
@@ -155,7 +203,8 @@ export function SettingsView() {
             accept=".json,application/json"
             className="hidden"
             onChange={(e) => {
-              void onImportFile(e.target.files?.[0], importBackup);
+              // A native backup carries settings; pull them into the UI too.
+              void onImportFile(e.target.files?.[0], importBackup, reloadSettings);
               e.target.value = "";
             }}
           />
@@ -173,6 +222,31 @@ export function SettingsView() {
       </div>
     </div>
   );
+}
+
+interface StorageState {
+  persisted: boolean;
+  /** One-decimal megabytes, or null when the browser won't estimate. */
+  usageMb: string | null;
+}
+
+/**
+ * Whether the browser has promised to keep our IndexedDB around, plus how much
+ * of it we use. Returns null where the Storage API doesn't exist at all — then
+ * there is nothing truthful to report, so the section stays hidden.
+ */
+async function readStorageState(): Promise<StorageState | null> {
+  if (!navigator.storage?.persisted) return null;
+  try {
+    const persisted = await navigator.storage.persisted();
+    const usage = navigator.storage.estimate ? (await navigator.storage.estimate()).usage : undefined;
+    return {
+      persisted,
+      usageMb: usage === undefined ? null : (usage / 1024 / 1024).toFixed(1),
+    };
+  } catch {
+    return null;
+  }
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {

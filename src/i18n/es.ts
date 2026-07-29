@@ -108,6 +108,18 @@ export const es = {
   "settings.importDone": (n: number) => `Importados ${n} solves.`,
   "settings.importFailed": "No se pudo leer el archivo.",
   "settings.exportEmpty": "No hay solves para exportar.",
+  "settings.section.storage": "Almacenamiento",
+  "settings.storageProtected": "Tus datos están protegidos frente al borrado automático.",
+  "settings.storageBestEffort":
+    "El navegador podría borrar tus datos si le falta espacio. Exporta una copia de seguridad de vez en cuando.",
+  "settings.storageProtect": "Proteger datos",
+  "settings.storageInstallHint":
+    "Instalar CubeStats como app (menú del navegador → «Instalar» o «Añadir a pantalla de inicio») hace que el navegador conceda esta protección.",
+  "settings.storageUsage": (mb: string) => `${mb} MB usados en este dispositivo.`,
+
+  "update.available": "Hay una versión nueva de CubeStats.",
+  "update.action": "Actualizar",
+  "update.dismiss": "Ahora no",
 
   "common.cancel": "Cancelar",
   "common.save": "Guardar",

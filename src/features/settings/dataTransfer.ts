@@ -50,13 +50,18 @@ export async function exportBackup(): Promise<void> {
 /**
  * Merges a native backup into the database (last-write-wins by `updatedAt`,
  * tombstoned solves never resurrected). Returns imported solve count, or null
- * when the file isn't a CubeStats bundle. Settings are not overwritten.
+ * when the file isn't a CubeStats bundle.
+ *
+ * Settings ride along with the backup and are restored too: a restore that
+ * brought back every solve but dropped your theme, language and inspection
+ * setup is a restore that lost data. Unknown keys are harmless — `settingsRepo`
+ * filters rows against `defaultSettings` on read.
  */
 export async function importBackup(raw: string): Promise<number | null> {
   const bundle = parseExportBundle(raw);
   if (!bundle) return null;
 
-  return db.transaction("rw", db.sessions, db.solves, db.trash, db.goals, async () => {
+  return db.transaction("rw", db.sessions, db.solves, db.trash, db.goals, db.settings, async () => {
     const [sessions, solves, goals, trash] = await Promise.all([
       db.sessions.toArray(),
       db.solves.toArray(),
@@ -73,6 +78,7 @@ export async function importBackup(raw: string): Promise<number | null> {
     await db.solves.bulkPut(solvesToPut);
     await db.goals.bulkPut(goalsToPut);
     await db.trash.bulkPut(bundle.data.trash);
+    await settingsRepo.setMany(bundle.data.settings);
     return solvesToPut.length;
   });
 }

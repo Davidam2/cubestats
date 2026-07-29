@@ -5,6 +5,7 @@ import { useUiStore } from "./state/uiStore";
 import { getDictionary } from "./i18n";
 import { requestPersistentStorage } from "./db/persist";
 import { TabBar } from "./components/TabBar";
+import { UpdateBanner } from "./components/UpdateBanner";
 import { TimerView } from "./features/timer/TimerView";
 import { StatsView } from "./features/stats/StatsView";
 import { SessionsView } from "./features/sessions/SessionsView";
@@ -48,6 +49,7 @@ export function App() {
         {view === "sessions" && <SessionsView />}
         {view === "settings" && <SettingsView />}
       </main>
+      <UpdateBanner />
     </div>
   );
 }
